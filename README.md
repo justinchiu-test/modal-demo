@@ -1,5 +1,8 @@
 # modal-demo
+small demo for a swebench-like execution serve using modal.
+unlike swebench's execution harness, this autoscales.
 
+## Run it
 first, [setup modal](https://modal.com/docs/guide)
 
 then, you can run a small speed benchmark to compare parallel vs serial modal execution:
