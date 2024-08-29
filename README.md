@@ -15,3 +15,4 @@ and send an example request via
 ```
 uv run bash send_request.sh
 ```
+note: you will have to change the URL in `send_request.sh` to whatever endpoint modal generates for you
