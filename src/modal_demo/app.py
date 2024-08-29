@@ -55,6 +55,9 @@ def run_project2(code):
 
 # Block 3: Webserver
 class Project(StrEnum):
+    """
+    The name of each project in the benchmark
+    """
     PROJECT1 = auto()
     PROJECT2 = auto()
 
@@ -63,6 +66,7 @@ class EvaluationRequest(BaseModel):
     project: Project
     code: str
 
+# Mapping from project names to evaluation functions
 project2function = {
     Project.PROJECT1: run_project1,
     Project.PROJECT2: run_project2,
@@ -71,6 +75,9 @@ project2function = {
 @app.function()
 @modal.web_endpoint(method="POST")
 async def evaluate(requests: list[EvaluationRequest]):
+    """
+    Execute evaluation of each result async and return all results
+    """
     results = await asyncio.gather(*[
         project2function[r.project].remote.aio(r.code)
         for r in requests
