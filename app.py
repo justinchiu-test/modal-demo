@@ -1,5 +1,7 @@
+import asyncio
 import modal
 import subprocess
+import time
 
 app = modal.App("repo-rpc")
 
@@ -38,13 +40,41 @@ def run_project2(code):
     output = subprocess.check_output(f"uv run python {path}".split())
     return output
 
+async def async_run(code1, code2):
+    outputs = await asyncio.gather(
+        run_project1.remote.aio(code1),
+        run_project2.remote.aio(code2),
+    )
+    print(outputs)
 
 @app.local_entrypoint()
 def main():
     code1 = "import torch\nprint(torch.__version__)"
     code2 = "import jax\nprint(jax.__version__)"
 
+    start = time.time()
+    asyncio.run(async_run(code1, code2))
+    end = time.time()
+    print(end - start, "secs for parallel")
+
+    start = time.time()
     output1 = run_project1.remote(code1)
     print(output1)
     output2 = run_project2.remote(code2)
     print(output2)
+    end = time.time()
+    print(end - start, "secs for serial")
+
+    start = time.time()
+    asyncio.run(async_run(code1, code2))
+    end = time.time()
+    print(end - start, "secs for parallel")
+
+    start = time.time()
+    output1 = run_project1.remote(code1)
+    print(output1)
+    output2 = run_project2.remote(code2)
+    print(output2)
+    end = time.time()
+    print(end - start, "secs for serial")
+
